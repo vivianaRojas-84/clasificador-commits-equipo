@@ -1,10 +1,9 @@
-# Manual técnico
-
+# MANUAL TÉCNICO
 ## Clasificador de Commits con Inteligencia Artificial
 
 ### 1. Descripción general
 
-El proyecto consiste en desarrollar un sistema para clasificar mensajes de commits utilizando dos motores: un motor basado en reglas llamado ECO y un motor de inteligencia artificial mediante Ollama.
+El proyecto consiste en desarrollar un sistema que permite clasificar mensajes de commits utilizando dos motores: ECO, basado en reglas, y Ollama, que utiliza inteligencia artificial.
 
 El backend fue desarrollado con FastAPI y utiliza PostgreSQL para almacenar las clasificaciones realizadas.
 
@@ -12,92 +11,100 @@ El backend fue desarrollado con FastAPI y utiliza PostgreSQL para almacenar las 
 
 El sistema está compuesto por los siguientes elementos:
 
-* **Cliente:** permite enviar los mensajes de commits mediante Swagger o solicitudes HTTP.
-* **API FastAPI:** recibe las solicitudes y coordina el proceso de clasificación.
-* **Motor ECO:** clasifica los mensajes mediante reglas y palabras clave.
-* **Motor Ollama:** utiliza el modelo qwen2.5:0.5b para clasificar los mensajes mediante inteligencia artificial.
-* **Base de datos PostgreSQL:** almacena las inferencias realizadas, incluyendo el mensaje, la categoría, el motor utilizado y el tiempo de respuesta.
+- Cliente: permite enviar mensajes de commits mediante Swagger o solicitudes HTTP.
+- API FastAPI: recibe las solicitudes y coordina el proceso de clasificación.
+- Motor ECO: clasifica los mensajes mediante reglas y palabras clave.
+- Motor Ollama: utiliza el modelo qwen2.5:0.5b.
+- Base de datos PostgreSQL: almacena las inferencias realizadas.
 
-### 3. Diagrama de arquitectura
+### 3. Endpoints de la API
 
-```text
-              CLIENTE
-           (Swagger / HTTP)
-                  |
-                  v
-           API FASTAPI
-           Puerto 8000
-                  |
-          +-------+-------+
-          |               |
-          v               v
-      MOTOR ECO       MOTOR OLLAMA
-      (Reglas)        (qwen2.5:0.5b)
-                          |
-                          v
-                    API Ollama
-                    Puerto 11434
-          |
-          v
-      POSTGRESQL
-      Puerto 5432
-          |
-          v
-       TABLA
-     inferencias
-```
+- GET /health: verifica el estado de la API y la conexión con la base de datos.
+- POST /clasificar: recibe un mensaje de commit y devuelve su clasificación.
+- GET /inferencias: consulta el historial de clasificaciones almacenadas.
 
-### 4. Endpoints disponibles
+### 4. Tecnologías utilizadas
 
-| Método | Endpoint     | Descripción                               |
-| ------ | ------------ | ----------------------------------------- |
-| GET    | /health      | Verifica el funcionamiento de la API.     |
-| POST   | /clasificar  | Clasifica un mensaje de commit.           |
-| GET    | /inferencias | Consulta las clasificaciones almacenadas. |
+- Python 3.12.
+- FastAPI.
+- Uvicorn.
+- PostgreSQL 16.
+- Docker.
+- Ollama.
+- Modelo qwen2.5:0.5b.
+- psycopg2-binary.
+- python-dotenv.
+- Requests.
 
-### 5. Tecnologías utilizadas
+### 5. Configuración y seguridad
 
-* Python 3.12.
-* FastAPI.
-* Uvicorn.
-* PostgreSQL 16.
-* Docker.
-* Ollama.
-* Modelo qwen2.5:0.5b.
-* psycopg2-binary.
-* python-dotenv.
-* Requests.
+Las variables de configuración y las credenciales se almacenan en el archivo .env.
 
-### 6. Seguridad del sistema
+Este archivo está excluido del repositorio mediante .gitignore para evitar publicar información confidencial.
 
-El proyecto implementa las siguientes medidas de seguridad:
+El proyecto utiliza PostgreSQL para almacenar los resultados de las clasificaciones.
 
-* Las credenciales de conexión a PostgreSQL se almacenan en el archivo `.env`.
-* El archivo `.env` está excluido de Git mediante `.gitignore`.
-* Se creó un usuario de aplicación llamado `app_ia` con permisos limitados.
-* El usuario de aplicación tiene permisos de conexión, consulta e inserción en la tabla de inferencias.
-* Las dependencias de Python están registradas en `requirements.txt`.
-* Se utiliza Docker para ejecutar PostgreSQL en un contenedor independiente.
+### 6. Puesta en marcha del proyecto
+
+1. Abrir Ubuntu y ubicarse en la carpeta del proyecto.
+2. Iniciar PostgreSQL si está detenido:
+
+   docker start db-ia
+
+3. Activar el entorno virtual:
+
+   source .venv/bin/activate
+
+4. Para utilizar Ollama, verificar que esté ejecutándose. Si no está iniciado, abrir otra terminal y ejecutar:
+
+   ollama serve
+
+5. Iniciar FastAPI:
+
+   uvicorn app.main:app --reload
+
+6. Abrir Swagger en el navegador:
+
+   http://127.0.0.1:8000/docs
 
 ### 7. Pruebas realizadas
 
-Se realizaron pruebas para verificar el funcionamiento de los dos motores de clasificación.
+**Prueba 1. Estado de la API**
 
-**Prueba con el motor ECO:**
+- Endpoint: GET /health.
+- Resultado: HTTP 200.
+- Estado: ok.
+- Base de datos: ok.
 
-* Entrada: `docs: completar descripcion del proyecto`.
-* Resultado: `docs`.
-* Motor: `eco`.
+**Prueba 2. Motor ECO**
 
-**Prueba con Ollama:**
+- Mensaje: fea: agregar inicio de sesion.
+- Motor: eco.
+- Modelo: reglas.
+- Categoría: feat.
+- Latencia: 0 ms.
+- Resultado: clasificación exitosa.
 
-* Entrada: `feat: agregar modulo de usuarios`.
-* Resultado: `feat`.
-* Modelo: `qwen2.5:0.5b`.
-* Tiempo de respuesta: 3188 ms.
+**Prueba 3. Motor Ollama**
 
-Las pruebas confirmaron que las clasificaciones se almacenan correctamente en PostgreSQL.
+- Mensaje: feat: agregar inicio de reportes.
+- Motor: ollama.
+- Modelo: qwen2.5:0.5b.
+- Categoría: feat.
+- Latencia: 3334 ms.
+- Resultado: HTTP 200.
+
+**Prueba 4. Consulta de inferencias**
+
+- Endpoint: GET /inferencias.
+- Resultado: HTTP 200.
+- Se verificó el almacenamiento de las clasificaciones en PostgreSQL.
+- Registro ID 16 correspondiente a la prueba de Ollama.
 
 ### 8. Conclusión
 
-Se logró implementar un backend funcional que permite clasificar mensajes de commits mediante reglas e inteligencia artificial. Además, se integró PostgreSQL para conservar el historial de inferencias y se establecieron medidas básicas para proteger las credenciales y controlar los permisos de acceso a la base de datos.
+El proyecto cuenta con un backend funcional que permite clasificar mensajes de commits mediante un motor basado en reglas y otro de inteligencia artificial.
+
+Además, utiliza PostgreSQL para guardar el historial de inferencias y permite consultar los resultados mediante los endpoints de FastAPI.
+
+Las pruebas realizadas permitieron comprobar el funcionamiento de la API, la conexión con la base de datos y la clasificación mediante ambos motores.

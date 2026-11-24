@@ -1,29 +1,23 @@
-<<<<<<< HEAD
-# INFORME TÉCNICO – ENTORNO DE DESARROLLO IA
-
-# INFORME TÉCNICO – CARACTERIZACIÓN DEL ENTORNO Y MODELOS LOCALES
+# INFORME TÉCNICO – CLASIFICADOR DE COMMITS CON IA
 
 ## 1. Información del entorno
 
 - Sistema operativo: Ubuntu 24.04 LTS.
 - Entorno de ejecución: WSL2.
-- Perfil de hardware: A.
-- Memoria RAM asignada a WSL: 7.8 GiB.
-- Espacio disponible en disco: 951 GB.
+- Memoria RAM asignada a WSL: aproximadamente 7.8 GiB.
 - Procesador utilizado: CPU.
-
-## 2. Herramientas de inteligencia artificial
-
-- Herramienta de ejecución: Ollama.
+- Herramienta de inteligencia artificial: Ollama.
 - Versión de Ollama: 0.40.11.
+
+## 2. Modelos de inteligencia artificial evaluados
 
 ### Modelo qwen2.5-coder:1.5b
 
-- Tamaño del modelo instalado: 986 MB.
+- Tamaño instalado: 986 MB.
 
 ### Modelo qwen2.5:0.5b
 
-- Tamaño del modelo instalado: 397 MB.
+- Tamaño instalado: 397 MB.
 - Tamaño reportado durante la ejecución: 486 MB.
 - Contexto: 4096.
 
@@ -69,7 +63,30 @@ Nota: estos datos corresponden al consumo general de Ubuntu durante la prueba, n
 - Procesador: 100% CPU.
 - Contexto: 4096.
 
-## 5. Evaluación de calidad
+## 5. Pruebas de funcionamiento de la API
+
+Se realizaron pruebas mediante Swagger para verificar los endpoints del sistema.
+
+| Endpoint | Resultado |
+|---|---|
+| GET /health | Correcto. Conexión con PostgreSQL confirmada. |
+| POST /clasificar con ECO | Correcto. Clasificación feat. |
+| POST /clasificar con Ollama | Correcto. Clasificación feat. |
+| GET /inferencias | Correcto. Consulta de registros almacenados. |
+
+### Prueba reciente con Ollama
+
+- Mensaje: feat: agregar inicio de reportes.
+- Motor utilizado: ollama.
+- Modelo: qwen2.5:0.5b.
+- Categoría obtenida: feat.
+- Tiempo de respuesta: 3334 ms.
+- Código HTTP: 200.
+- Registro almacenado en PostgreSQL: ID 16.
+
+Esta prueba confirmó que el modelo puede clasificar mensajes desde la API y guardar los resultados en la base de datos.
+
+## 6. Evaluación de calidad
 
 ### Modelo qwen2.5-coder:1.5b
 
@@ -83,90 +100,12 @@ El modelo ofrece respuestas claras, comprende las instrucciones y proporciona ej
 
 El modelo presenta un tiempo de respuesta rápido y puede generar resultados relacionados con el mensaje de commit. Sin embargo, sus respuestas no siempre corresponden exactamente a la categoría esperada, por lo que su desempeño se considera regular.
 
-## 6. Conclusiones
+## 7. Conclusiones
 
-La instalación y configuración del entorno de inteligencia artificial se realizó correctamente. Docker, Docker Compose, Git, Python y Ollama funcionan adecuadamente.
+La instalación y configuración del entorno de inteligencia artificial se realizó correctamente. Se evaluaron los modelos qwen2.5-coder:1.5b y qwen2.5:0.5b, observando diferencias en sus tiempos de respuesta y calidad.
 
-Se probaron los modelos qwen2.5-coder:1.5b y qwen2.5:0.5b. Ambos pudieron ejecutarse y responder. Las pruebas permitieron observar diferencias en sus tiempos de respuesta y en la calidad de sus resultados.## 1. Información del entorno
+También se implementó un backend funcional con FastAPI, integrado con PostgreSQL y dos motores de clasificación: ECO, basado en reglas, y Ollama, que utiliza inteligencia artificial.
 
-- Sistema operativo: Ubuntu 24.04 LTS.
-- Entorno de ejecución: WSL2.
-- Perfil de hardware: A.
-- Memoria RAM asignada a WSL: 7.8 GiB.
-- Espacio disponible en disco: 951 GB.
+Las pruebas realizadas confirmaron el funcionamiento de los endpoints, la clasificación de mensajes y el almacenamiento de las inferencias en PostgreSQL.
 
-## 2. Modelo de inteligencia artificial
-
-- Modelo instalado: qwen2.5-coder:1.5b.
-- Herramienta de ejecución: Ollama.
-- Versión de Ollama: 0.40.11.
-- Tamaño del modelo: 986 MB.
-
-## 3. Mediciones de rendimiento
-
-### Tiempos de respuesta
-
-| Ejecución | Tiempo |
-|---|---:|
-| 1 | 4957 ms |
-| 2 | 209 ms |
-| 3 | 206 ms |
-| 4 | 230 ms |
-| 5 | 202 ms |
-| **Promedio** | **1161 ms** |
-
-La primera ejecución presentó un tiempo mayor debido a la carga inicial del modelo. Las siguientes respuestas fueron considerablemente más rápidas.
-
-### Consumo de memoria
-
-- Memoria total asignada: 7.8 GiB.
-- Memoria disponible durante la prueba: 6.2 GiB.
-- Uso de swap: 0 B.
-
-Nota: estos datos corresponden al consumo general de Ubuntu durante la prueba, no exclusivamente al modelo.
-
-## 4. Evaluación de calidad
-
-- Calificación: 4/5.
-
-El modelo ofrece respuestas claras, comprende las instrucciones y proporciona ejemplos útiles. Sin embargo, algunas respuestas pueden necesitar revisión para asegurar que la información sea completamente correcta.
-
-## 5. Conclusiones
-
-La instalación y configuración del entorno de inteligencia artificial se realizó correctamente. Docker, Docker Compose, Git, Python y Ollama funcionan adecuadamente. El modelo Qwen2.5-Coder:1.5b pudo ejecutarse y responder tanto desde la terminal como mediante la API REST.
-=======
-# Informe técnico: Caracterización del modelo local
-
-## 1. Perfil de hardware
-- Sistema operativo: Ubuntu en WSL2.
-- Memoria RAM total: 7.4 GiB.
-- Procesador utilizado: CPU.
-
-## 2. Modelo utilizado
-- Nombre del modelo: qwen2.5:0.5b.
-- Tamaño del modelo instalado: 397 MB.
-- Tamaño reportado durante la ejecución: 486 MB.
-- Contexto: 4096.
-
-## 3. Pruebas de inferencia
-
-| Ejecución | Respuesta del modelo | Tiempo real |
-|---|---|---:|
-| 1 | Clases | 0.324 s |
-| 2 | Desarrollo, Entorno, Documentación | 0.543 s |
-| 3 | Desarrollo | 0.194 s |
-| 4 | git commit: completar descripcion del proyecto | 0.377 s |
-| 5 | Git | 0.306 s |
-
-### Tiempo promedio
-El tiempo promedio de las cinco ejecuciones fue de 0.349 segundos.
-
-## 4. Memoria durante la inferencia
-- Memoria reportada por Ollama: 486 MB.
-- Procesador: 100% CPU.
-- Contexto: 4096.
-
-## 5. Calidad percibida
-- Calificación: 3/5.
-- Justificación: El modelo presenta un tiempo de respuesta rápido y puede generar resultados relacionados con el mensaje de commit. Sin embargo, sus respuestas no siempre corresponden exactamente a la categoría esperada, por lo que su desempeño se considera regular.
->>>>>>> 98b8981 (docs: caracterizacion del modelo local)
+Finalmente, se establecieron medidas básicas de seguridad para proteger las credenciales y controlar el acceso a la base de datos.

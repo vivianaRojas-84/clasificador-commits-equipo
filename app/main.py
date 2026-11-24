@@ -29,7 +29,7 @@ MOTOR_POR_DEFECTO = os.getenv("MOTOR_POR_DEFECTO", "eco")
 # Modelo de entrada
 class Commit(BaseModel):
     mensaje: str
-    motor: str = "eco"
+    motor: str | None = None
 
 
 # Conexión a PostgreSQL
@@ -83,7 +83,21 @@ def clasificar_ollama(mensaje):
 # Ruta principal de verificación
 @app.get("/health")
 def health():
-    return {"estado": "API funcionando correctamente"}
+    try:
+        with obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute("SELECT 1")
+
+        return {
+            "estado": "ok",
+            "base_datos": "ok"
+        }
+
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Base de datos no disponible"
+        )
 
 
 # Ruta para clasificar commits
