@@ -1,11 +1,11 @@
 import os
 import time
+
 import psycopg2
 import requests
-
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from dotenv import load_dotenv
 
 # Cargar variables de entorno
 load_dotenv()
@@ -84,16 +84,15 @@ def clasificar_ollama(mensaje):
 @app.get("/health")
 def health():
     try:
-        with obtener_conexion() as conexion:
-            with conexion.cursor() as cursor:
-                cursor.execute("SELECT 1")
+        with obtener_conexion() as conexion, conexion.cursor() as cursor:
+            cursor.execute("SELECT 1")
 
         return {
             "estado": "ok",
             "base_datos": "ok"
         }
 
-    except Exception:
+    except psycopg2.Error:
         raise HTTPException(
             status_code=503,
             detail="Base de datos no disponible"
